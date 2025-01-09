@@ -1,0 +1,8 @@
+#virtual env binaries
+.venv
+
+#python notebook endpoints
+notebooks/.ipynb_checkpoints
+
+#data
+data/*

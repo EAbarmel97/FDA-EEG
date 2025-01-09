@@ -1,0 +1,4 @@
+scikit-fda
+pyEDFlib
+numpy
+matplotlib
