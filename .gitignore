@@ -2,7 +2,7 @@
 .venv
 
 #python notebook endpoints
-notebooks/.ipynb_checkpoints
+scripts/.ipynb_checkpoints
 
 #data
 data/*
