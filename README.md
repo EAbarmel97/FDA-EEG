@@ -9,5 +9,3 @@ From the terminal:
 
 1. Run: `bash build/setup_env.sh` (this may take a few minutes)
 2. Launch the jupyter server: `bash launch_jupyter.sh`
-
-NOTE: eegs records are saved with EDF format. 
