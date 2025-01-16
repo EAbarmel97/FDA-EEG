@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 # create virtualenv
 python3 -m venv ./.venv
 
