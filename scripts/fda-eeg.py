@@ -4,7 +4,15 @@ import re
 import pyedflib
 import numpy as np 
 import matplotlib.pyplot as plt
-import skfda 
+
+import skfda
+import skfda.representation.basis as basis
+from skfda.exploratory.visualization import FPCAPlot
+from skfda.preprocessing.dim_reduction import FPCA
+from skfda.representation.basis import BSplineBasis
+from skfda.representation.interpolation import SplineInterpolation
+
+from scipy import stats 
 
 from utils import *
 
@@ -53,5 +61,10 @@ fd = skfda.FDataGrid(
             grid_points=np.linspace(0,91000,91000)/500
         )
 
+n_basis = 19
+
 #raw eeg-signals transformed into functional data using 
 #B-splines basis functions
+fd_basis = fd.to_basis(basis.BSplineBasis(n_basis=n_basis))
+
+fd_basis.plot()

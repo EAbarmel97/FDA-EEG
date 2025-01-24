@@ -2,6 +2,13 @@ import numpy as np
 import pyedflib
 import pandas as pd
 
+import skfda
+import skfda.representation.basis as basis
+from skfda.exploratory.visualization import FPCAPlot
+from skfda.preprocessing.dim_reduction import FPCA
+from skfda.representation.basis import BSplineBasis
+from skfda.representation.interpolation import SplineInterpolation
+
 label_index_dict = {"Fp1":0,"Fp2":1,"F3":2,"F4":3,"F7":4,"F8":5,"T3":6,"T4":7,"C3":8,
                     "C4":9,"T5":10,"T6":11,"P3":12,"P4":13,"O1":14,"O2":15,"Fz":16, "Cz":17,"Pz":18}
 
@@ -27,4 +34,17 @@ def write_data_frames(subject_file_path_dict):
     for subject_idx in range(len(subject_file_path_dict.keys())-1):
         all_labels = list(label_index_dict.keys())
         data = eeg_data_matrix(subject_idx, subject_file_path_dict, all_labels)
-        
+
+def convert_eeg_2fd(data_matrix, grid_points,n_basis):
+    #functional data in dicrete format
+
+    #grid_points: np.linspace(0,91000,91000)/500
+    fd = skfda.FDataGrid(
+            data_matrix=data_matrix,
+            grid_points=grid_points
+        )
+
+    #raw eeg-signals transformed into functional data using 
+    #B-splines basis functions
+    fd_basis = fd.to_basis(basis.BSplineBasis(n_basis=n_basis))
+    return fd_basis
