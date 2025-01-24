@@ -9,4 +9,5 @@ scripts/*.ipynb
 scripts/__pycache__
 
 #data
-data/*
+data/eeg-during-mental-arithmetic-tasks-1.0.0
+data/eeg-during-mental-arithmetic-tasks-1.0.0.zip
