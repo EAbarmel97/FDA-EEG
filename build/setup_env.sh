@@ -1,18 +1,17 @@
 #!/usr/bin/sh
-# create virtualenv
+# Create virtualenv
 python3 -m venv ./.venv
 
-#source the excutable
+# Activate the virtual environment
 source ./.venv/bin/activate
 
-#upgrade pip
+# Upgrade pip
 pip install --upgrade pip
 
-
-#add kernel to une inside dedicated jupiter virtualenv
+# Install necessary packages for Jupyter
 pip install ipykernel
 pip install notebook
 pip install -r requirements.txt
 
-#adding the virtual env to Jupiter
+# Add the virtual environment to Jupyter
 python -m ipykernel install --user --name=venv --display-name "Python (venv)"
