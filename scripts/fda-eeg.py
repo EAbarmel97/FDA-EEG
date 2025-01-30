@@ -44,6 +44,9 @@ for edf_file_name in eeg_signalfiles_names :
 
 f = pyedflib.EdfReader(before_arith_task[0])
 
+print(before_arith_task)
+print(after_arith_task)
+
 #print edf file metadata
 print(f.file_info_long())
 eeg_signal = f.readSignal(label_index_dict.get("P4", None))
@@ -51,20 +54,11 @@ f.close()
 print()
 print("eeg signal number 0: ", eeg_signal)
 
-
 all_labels = list(label_index_dict.keys())
 data = eeg_data_matrix(1, before_arith_task, all_labels)
 
-#functional data in dicrete format
-fd = skfda.FDataGrid(
-            data_matrix=data,
-            grid_points=np.linspace(0,91000,91000)/500
-        )
-
 n_basis = 19
 
-#raw eeg-signals transformed into functional data using 
-#B-splines basis functions
-fd_basis = fd.to_basis(basis.BSplineBasis(n_basis=n_basis))
-
-fd_basis.plot()
+#raw eeg-signals transformed into functional datum
+fd_basis = convert_eeg_2fd(data, 500, n_basis)
+print(fd_basis)

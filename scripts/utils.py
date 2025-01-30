@@ -1,3 +1,6 @@
+import os
+import re
+
 import numpy as np
 import pyedflib
 import pandas as pd
@@ -30,21 +33,36 @@ def eeg_data_matrix(subject_idx, subject_edfsignal_dict, labels):
         f.close()
         return np.matrix(eeg_signals_arr)
 
-def write_data_frames(subject_file_path_dict):
-    for subject_idx in range(len(subject_file_path_dict.keys())-1):
-        all_labels = list(label_index_dict.keys())
-        data = eeg_data_matrix(subject_idx, subject_file_path_dict, all_labels)
+def write_data_frames(subject_file_path_dict,data_subdir):
+    """
+    write_data_frames persists under `data` CSV files obtained by concatenating all EEG-signals for 
+    each EDF file. The CSV files have the same file stem as the corresponding EDF files
+    """
+    all_labels = list(label_index_dict.keys())
 
-def convert_eeg_2fd(data_matrix, grid_points,n_basis):
+    for subject_idx in range(len(subject_file_path_dict)-1):
+        #attributes now are columns, observations are rows
+        transposed_data = eeg_data_matrix(subject_idx, subject_file_path_dict, all_labels).transpose()
+
+        df = pd.DataFrame(transposed_data, columns=all_labels)
+        base_name = os.path.basename(subject_file_path_dict[subject_idx])
+        csv_base_name = re.sub(r".edf",".csv", base_name)
+        df.to_csv(os.path.join("data", data_subdir, csv_base_name))
+
+
+def convert_eeg_2fd(data_matrix,fs, n_basis):
+    """
+    convert_eeg_2fd converts a raw `data_matrix` into a functional datum. First constructs the discrete scikit-fda 
+    functional representation and then transforms it into the truncated basis-funcion representation. 
+    All EEG signals are assumed to have the same frecuency sampling. 
+    """
+
     #functional data in dicrete format
-
-    #grid_points: np.linspace(0,91000,91000)/500
     fd = skfda.FDataGrid(
             data_matrix=data_matrix,
-            grid_points=grid_points
+            grid_points= np.linspace(0,data_matrix.shape[1], data_matrix.shape[1])/fs
         )
 
-    #raw eeg-signals transformed into functional data using 
-    #B-splines basis functions
+    #raw eeg-signals transformed into functional data using B-splines basis functions
     fd_basis = fd.to_basis(basis.BSplineBasis(n_basis=n_basis))
     return fd_basis
