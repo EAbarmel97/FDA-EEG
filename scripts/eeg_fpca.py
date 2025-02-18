@@ -1,6 +1,3 @@
-import os 
-import re
-
 import pyedflib
 import numpy as np 
 import matplotlib.pyplot as plt
@@ -14,9 +11,10 @@ from skfda.representation.interpolation import SplineInterpolation
 
 from scipy import stats 
 
-from utils import *
+import os 
+import re
 
-#NOTE: dataset needs to be downloaded and unziped  
+from utils import *
 
 #filter edf files
 eeg_signalfiles_names = list(filter(lambda s : s.endswith(".edf") , 
@@ -27,7 +25,6 @@ eeg_signalfiles_names = list(filter(lambda s : s.endswith(".edf") ,
 #dicts with subject_id - eeg_signal_filepath
 before_arith_task = {}
 after_arith_task = {}
-
 
 # process each file
 for edf_file_name in eeg_signalfiles_names :
@@ -42,23 +39,19 @@ for edf_file_name in eeg_signalfiles_names :
         subject_id = int(re.findall(r"\d\d", file_name)[0])
         after_arith_task[subject_id] = edf_file_name
 
-f = pyedflib.EdfReader(before_arith_task[0])
 
-print(before_arith_task)
-print(after_arith_task)
+def do_for_dir(
+    subject_file_path_dict: Dict[int, str],
+    fun: callable
+) -> None:
+    pass
 
-#print edf file metadata
-print(f.file_info_long())
-eeg_signal = f.readSignal(label_index_dict.get("P4", None))
-f.close()
-print()
-print("eeg signal number 0: ", eeg_signal)
+if __name__ == '__main__':
 
-all_labels = list(label_index_dict.keys())
-data = eeg_data_matrix(1, before_arith_task, all_labels)
+    #save plots of the functional representation of the EEG data
+    
+    #save plots of the fpca associated with the functional EEG data
 
-n_basis = 19
-
-#raw eeg-signals transformed into functional datum
-fd_basis = convert_eeg_2fd(data, 500, n_basis)
-print(fd_basis)
+    #save eigenvalues obtained from truncated FPCA
+    
+    print("ploting...")
