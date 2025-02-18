@@ -3,10 +3,11 @@
 
 #python notebook endpoints
 scripts/.ipynb_checkpoints
-scripts/*.ipynb
 
 #python files
 scripts/__pycache__
 
 #data
 data/*
+
+download.log
