@@ -1,10 +1,10 @@
 #!/bin/bash
-data_dir="FDA-EEG/data"
 virtual_env=".venv/bin/activate"
 
+data_dir="$(dirname "$0")/data"
 
 #if data dir doesnt exit
-if [ ! -d "FDA-EEG/data" ]; then
+if [ ! -d "$data_dir" ]; then
   mkdir -p $data_dir/csv_data/{before_arith,after_arith}
 fi
 
