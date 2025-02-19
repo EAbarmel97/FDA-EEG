@@ -44,14 +44,14 @@ def do_for_dir(
     subject_file_path_dict: Dict[int, str],
     fun: callable
 ) -> None:
-    pass
+    for subject_idx in range(len(subject_file_path_dict)-1):
+        pass
 
 if __name__ == '__main__':
-
     #save plots of the functional representation of the EEG data
     
     #save plots of the fpca associated with the functional EEG data
-
+    
     #save eigenvalues obtained from truncated FPCA
     
     print("ploting...")

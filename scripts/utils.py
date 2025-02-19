@@ -23,6 +23,7 @@ label_index_dict = {"Fp1":0,"Fp2":1,"F3":2,"F4":3,"F7":4,"F8":5,"T3":6,"T4":7,"C
 class TimePeriod(Enum):
     BEFORE = "before"
     AFTER = "after"
+    
 @dataclass
 class EEGData:
         subject_id: int
@@ -77,20 +78,19 @@ def write_data_frames(
     else:
         time_period = TimePeriod.AFTER
 
-    for subject_idx in range(len(subject_file_path_dict)-1):
+    for subject_idx in range(len(subject_file_path_dict)):
         #attributes now are columns, observations are rows
         eeg_data = eeg_dataclass(subject_idx, subject_file_path_dict, all_labels, time_period)
         transposed_data = eeg_data.data_matrix.transpose()
 
         df = pd.DataFrame(transposed_data, columns=all_labels)
         df["subject_idx"] = np.full_like(df.index,eeg_data.subject_id)
-        df["fs"] = np.full_like(df.index,eeg_data.fs_eeg_signals)
+        df["fs"] = np.full_like(df.index, eeg_data.fs_eeg_signals)
 
         base_name = os.path.basename(subject_file_path_dict[subject_idx])
         csv_base_name = re.sub(r".edf",".csv", base_name)
         
         df.to_csv(os.path.join("data/csv_data", data_subdir_name, csv_base_name))
-
 
 def convert_raweeg_2fd(
     eeg_data: EEGData, 
@@ -123,11 +123,18 @@ def convert_raweeg_2fd(
 def eeg_fpca_eigspectrum(
     eeg_data: EEGData, 
     n_basis: int, 
-    saveplot: bool = False
+    save_plot: bool = False
     ) -> np.ndarray:
     fd_basis = convert_raweeg_2fd(eeg_data, n_basis)
     fpca = FPCA(n_basis)
     fpca.fit(fd_basis)
+
+    if save_plot:
+        fd_basis.plot()
+        if eeg_data.time_period.value == "before":
+            plt.savefig(f"plots/raw2fd/before/subject{eeg_data.subject_id}.pdf")
+        else:
+            plt.savefig()
 
     eigvals = np.square(fpca.singular_values_)
     return eigvals[np.abs(eigvals) >= np.finfo(float).eps]
