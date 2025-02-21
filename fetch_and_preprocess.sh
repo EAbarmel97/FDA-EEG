@@ -1,5 +1,7 @@
 #!/bin/bash
-virtual_env=".venv/bin/activate"
+fda_eeg="/storage5/eabarmel/FDA-EEG/"
+virtual_env="$fda_eeg/.venv/bin/activate"
+scripts_icn
 
 data_dir="$(dirname "$0")/data"
 
@@ -29,4 +31,4 @@ fi
 echo "procesing EDF files ..."
 
 #activate env and process EDF files to create CSV files
-source "$virtual_env" && python3 scripts/edf_preprocess.py
+source "$virtual_env" && python3 "$fda_eeg"/scripts/edf_preprocess.py
