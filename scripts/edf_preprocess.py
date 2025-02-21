@@ -26,6 +26,8 @@ for edf_file_name in eeg_signalfiles_names :
         subject_id = int(re.findall(r"\d\d", file_name)[0])
         after_arith_task[subject_id] = edf_file_name
 
+print(before_arith_task)
+print(after_arith_task)
 if __name__ == '__main__':
     #convert all EDF files into CSV
     write_data_frames(before_arith_task, "before_arith")
