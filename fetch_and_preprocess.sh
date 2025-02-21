@@ -1,31 +1,32 @@
 #!/bin/bash
-data_dir=$(pwd)"/data"
 virtual_env=".venv/bin/activate"
 
+data_dir="$(dirname "$0")/data"
 
-#if data dir doesnt exit
-if [ ! -d $(pwd)/"data" ]; then
-  mkdir -p $data_dir/csv_data/{before_arit,after_arith}
+#if data dir doesnt exit create it with all its subdirs
+if [ ! -d "$data_dir" ]; then
+  mkdir -p $data_dir/csv_data/{before_arith,after_arith}
 fi
-
+#create subdirs inside data/ 
 mkdir -p $data_dir/csv_data/{before_arith,after_arith}
 
 #download EEG-data
 if [ ! -f "$data_dir/eeg-during-mental-arithmetic-tasks-1.0.0.zip" ]; then
-  curl --no-buffer -o "$data_dir/eeg-during-mental-arithmetic-tasks-1.0.0.zip" "https://physionet.org/static/published-projects/eegmat/eeg-during-mental-arithmetic-tasks-1.0.0.zip" 2> download.log
+  curl -o "$data_dir/eeg-during-mental-arithmetic-tasks-1.0.0.zip" "https://physionet.org/static/published-projects/eegmat/eeg-during-mental-arithmetic-tasks-1.0.0.zip" 2> ./download.log
 fi
 
-# searach .zip file and unzip it 
-for file in "$data_dir"/*; do
-    case "$file" in
-    *.zip)
-      echo "unziping ..."
-      unzip $file -d $data_dir
-    esac
-done
+if [ ! -d "$data_dir/eeg-during-mental-arithmetic-tasks-1.0.0" ]; then
+  # searach .zip file and unzip it 
+  for file in "$data_dir"/*; do
+      case "$file" in
+      *.zip)
+        echo "unziping ..."
+        unzip "$file" -d "$data_dir"
+      esac
+  done
+fi
 
+echo "procesing EDF files ..."
 
 #activate env and process EDF files to create CSV files
-source $virtual_env
-python3 scripts/edf_preprocess.py
-
+source "$virtual_env" && python3 scripts/edf_preprocess.py

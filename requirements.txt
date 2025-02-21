@@ -1,4 +1,0 @@
-scikit-fda
-pyEDFlib
-matplotlib
-pandas
