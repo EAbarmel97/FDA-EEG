@@ -63,7 +63,8 @@ def plot_fpca_and_functional_eeg(
     if write_eigspectra: 
             df = pd.DataFrame(subject_eigspectrum_dict)
             csv_file_name = f"{time_period.value}_fpca_eigspectrum.csv"
-                            
+            if not os.path.exists("./eigenspectrum"):
+                os.makedirs("./eigenspectrum")
             df.to_csv(os.path.join("eigenspectrum", csv_file_name))              
     return 
 
@@ -78,33 +79,52 @@ def plot_eigspectra(data_subdir_name: str) -> None:
 
         eigspectrum = eigspectra_data.iloc[:,i].values
         ranks = np.arange(1, len(eigspectrum)+1)
-        slope, intercept, r, _, _ = stats.linregress(np.log10(ranks), np.log10(eigspectrum))
 
-        vals = list(map(lambda x: 10**(intercept + np.log10(x)*slope) , ranks))
+        # Try fits dropping up to max_dropped eigenvalues in the tail
+        max_dropped = 5
+        best_r2 = float("-inf")
+        best_slope = None
+        best_intercept = None
+        fitted_ranks = None
+        for num_drop in range(max_dropped+1):
+            slope, intercept, r, _, _ = stats.linregress(np.log10(ranks[:len(ranks)-num_drop]), np.log10(eigspectrum[:len(ranks)-num_drop]))
+            if r**2 > best_r2:
+                best_r2 = r**2
+                best_slope = slope
+                best_intercept = intercept
+                fitted_ranks = ranks[:len(ranks)-num_drop]
+        r2 = best_r2
+        slope = best_slope
+        intercept = best_intercept
+
+        vals = list(map(lambda x: 10**(intercept + np.log10(x)*slope) , fitted_ranks))
         plt.loglog(ranks, eigspectrum)
-        plt.plot(ranks, vals, label=f'Fit: y = {10**intercept:.2f} * x^{slope:.2f}', color='red', linewidth=2)
+        plt.plot(fitted_ranks, vals, label=f'Fit: y = {10**intercept:.2f} * x^{slope:.2f}', color='red', linewidth=2)
 
         #label axes
         plt.xlabel('log-rank')
         plt.ylabel('log-eigval')
-        plt.text(1, 1, f"$r^2 = {r**2:.3f}$", fontsize=12, color="black")
-        plt.savefig(f"plots/eigenspectrum/{time_period.value}/subject{i}.pdf")
+        plt.text(1, 1, f"$r^2 = {r2:.3f}$", fontsize=12, color="black")
+        # plt.savefig(f"plots/eigenspectrum/{time_period.value}/subject{i}.pdf")
+        plt.title(f"FPCA exponent = {slope:.3f}")
+        plt.tight_layout()
+        plt.savefig(f"plots/eigenspectrum/{time_period.value}/subject{i}.png")
         plt.close()
 
             
-before_arith_test = {0: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject00_1.edf',
-                     1: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject01_1.edf', 
-                     2: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject02_1.edf', 
-                     3: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject03_1.edf', 
-                     4: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject04_1.edf', 
-                     5: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject05_1.edf'}
+before_arith_test = {0: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject00_1.edf',
+                     1: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject01_1.edf', 
+                     2: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject02_1.edf', 
+                     3: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject03_1.edf', 
+                     4: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject04_1.edf', 
+                     5: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject05_1.edf'}
 
-after_arith_test= {0: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject00_2.edf', 
-                   1: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject01_2.edf', 
-                   2: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject02_2.edf', 
-                   3: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject03_2.edf', 
-                   4: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject04_2.edf', 
-                   5: '/home/enki/Documents/THESIS/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject05_2.edf'}
+after_arith_test= {0: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject00_2.edf', 
+                   1: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject01_2.edf', 
+                   2: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject02_2.edf', 
+                   3: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject03_2.edf', 
+                   4: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject04_2.edf', 
+                   5: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject05_2.edf'}
         
 if __name__ == '__main__': 
 

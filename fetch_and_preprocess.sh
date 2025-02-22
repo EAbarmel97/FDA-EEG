@@ -5,7 +5,7 @@ scripts_icn
 
 data_dir="$(dirname "$0")/data"
 
-#if data dir doesnt exit create it with all its subdirs
+#if data dir doesnt exist create it with all its subdirs
 if [ ! -d "$data_dir" ]; then
   mkdir -p $data_dir/csv_data/{before_arith,after_arith}
 fi
@@ -18,7 +18,7 @@ if [ ! -f "$data_dir/eeg-during-mental-arithmetic-tasks-1.0.0.zip" ]; then
 fi
 
 if [ ! -d "$data_dir/eeg-during-mental-arithmetic-tasks-1.0.0" ]; then
-  # searach .zip file and unzip it 
+  # search .zip file and unzip it 
   for file in "$data_dir"/*; do
       case "$file" in
       *.zip)
