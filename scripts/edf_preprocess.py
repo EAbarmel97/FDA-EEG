@@ -5,7 +5,7 @@ from utils import *
 
 #filter edf files
 eeg_signalfiles_names = list(filter(lambda s : s.endswith(".edf") , 
-                            [os.path.abspath(os.path.join("data/eeg-during-mental-arithmetic-tasks-1.0.0", f)) for 
+                            [os.path.abspath(os.path.join("/storage5/eabarmel/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0", f)) for 
                             f in os.listdir("/storage5/eabarmel/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0")]
                         ))
 

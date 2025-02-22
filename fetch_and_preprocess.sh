@@ -1,7 +1,6 @@
 #!/bin/bash
-fda_eeg="/storage5/eabarmel/FDA-EEG/"
+fda_eeg="/storage5/eabarmel/FDA-EEG"
 virtual_env="$fda_eeg/.venv/bin/activate"
-scripts_icn
 
 data_dir="$(dirname "$0")/data"
 
