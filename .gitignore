@@ -10,4 +10,9 @@ scripts/__pycache__
 #data
 data/*
 
+plots/*/before/*.png
+plots/*/after/*.png
+eigenspectrum/fit/*.csv
+eigenspectrum/*.csv
+
 download.log
