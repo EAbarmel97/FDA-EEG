@@ -1,3 +1,3 @@
 #!/bin/bash
-rm plots/*/before/*.png && rm plots/*/after/*.png
-rm eigenspectrum/fit/*.csv && rm eigenspectrum/*.csv
+rm /storage5/eabarmel/FDA-EEG/plots/*/before/*.png && rm /storage5/eabarmel/FDA-EEG/plots/*/after/*.png
+rm /storage5/eabarmel/FDA-EEG/eigenspectrum/fit/*.csv && rm /storage5/eabarmel/FDA-EEG/eigenspectrum/*.csv
