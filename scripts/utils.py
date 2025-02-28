@@ -142,5 +142,5 @@ def write_data_frames(
         base_name = os.path.basename(subject_file_path_dict[subject_idx])
         csv_base_name = re.sub(r".edf",".csv", base_name)
         
-        df.to_csv(os.path.join("data/csv_data", data_subdir_name, csv_base_name))
+        df.to_csv(os.path.join("/storage5/eabarmel/FDA-EEG/data/csv_data", data_subdir_name, csv_base_name))
     return
