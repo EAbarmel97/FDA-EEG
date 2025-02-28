@@ -126,26 +126,11 @@ def plot_eigspectra(data_subdir_name: str, write_expoenents: bool = False) -> No
     if write_expoenents:
         subject_slope_df.to_csv(os.path.join("eigenspectrum", "fit", f"{time_period.value}_slope.csv"))    
 
-before_arith_test = {0: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject00_1.edf',
-                     1: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject01_1.edf', 
-                     2: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject02_1.edf', 
-                     3: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject03_1.edf', 
-                     4: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject04_1.edf', 
-                     5: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject05_1.edf'}
-
-after_arith_test= {0: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject00_2.edf', 
-                   1: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject01_2.edf', 
-                   2: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject02_2.edf', 
-                   3: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject03_2.edf', 
-                   4: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject04_2.edf', 
-                   5: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject05_2.edf'}
-
-
 if __name__ == '__main__': 
 
     #plot functional data and its associated truncated functional principal components
-    plot_fpca_and_functional_eeg(before_arith_test, "before", 19, write_eigspectra=True)
-    plot_fpca_and_functional_eeg(after_arith_test, "after", 19, write_eigspectra=True)
+    plot_fpca_and_functional_eeg(before_arith_task, "before", 19, write_eigspectra=True)
+    plot_fpca_and_functional_eeg(after_arith_task, "after", 19, write_eigspectra=True)
 
     #plot truncated spectrum in log-log scale
     plot_eigspectra("before", write_expoenents=True)
