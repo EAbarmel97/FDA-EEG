@@ -68,12 +68,18 @@ def plot_fpca_and_functional_eeg(
             df.to_csv(os.path.join("eigenspectrum", csv_file_name))              
     return 
 
-def plot_eigspectra(data_subdir_name: str) -> None:
+def plot_eigspectra(data_subdir_name: str, write_expoenents: bool = False) -> None:
+    """
+    Plots the eigenspectra. If `write_expoenents` is True, writes a CSV file containing the OLS estimator 
+    for the slope for each eigenspectrum
+    """
     if re.match(r"before", data_subdir_name):
         time_period = TimePeriod.BEFORE
     else:
         time_period = TimePeriod.AFTER
-    
+    if write_expoenents:
+        subject_slope_df = pd.DataFrame(columns=["subject_idx", "exponent"])
+        
     eigspectra_data = pd.read_csv(f"eigenspectrum/{time_period.value}_fpca_eigspectrum.csv")
     for i in range(1, eigspectra_data.shape[1]):
 
@@ -96,6 +102,12 @@ def plot_eigspectra(data_subdir_name: str) -> None:
         r2 = best_r2
         slope = best_slope
         intercept = best_intercept
+        
+        if write_expoenents:
+            subject_idx_slope = pd.DataFrame({"subject_idx": [i] ,"exponent": [slope]}).dropna(axis=1, how='all')
+            subject_idx_slope = subject_idx_slope.dropna(axis=1, how='all')
+            subject_slope_df = pd.concat([subject_slope_df, subject_idx_slope], ignore_index=True)
+
 
         vals = list(map(lambda x: 10**(intercept + np.log10(x)*slope) , fitted_ranks))
         plt.loglog(ranks, eigspectrum)
@@ -105,13 +117,15 @@ def plot_eigspectra(data_subdir_name: str) -> None:
         plt.xlabel('log-rank')
         plt.ylabel('log-eigval')
         plt.text(1, 1, f"$r^2 = {r2:.3f}$", fontsize=12, color="black")
-        # plt.savefig(f"plots/eigenspectrum/{time_period.value}/subject{i}.pdf")
+   
         plt.title(f"FPCA exponent = {slope:.3f}")
         plt.tight_layout()
-        plt.savefig(f"plots/eigenspectrum/{time_period.value}/subject{i}.png")
+        plt.savefig(f"plots/eigenspectrum/{time_period.value}/{time_period.value}_subject{i}.png")
         plt.close()
 
-            
+    if write_expoenents:
+        subject_slope_df.to_csv(os.path.join("eigenspectrum", "fit", f"{time_period.value}_slope.csv"))    
+
 before_arith_test = {0: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject00_1.edf',
                      1: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject01_1.edf', 
                      2: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject02_1.edf', 
@@ -125,7 +139,8 @@ after_arith_test= {0: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject00_2
                    3: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject03_2.edf', 
                    4: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject04_2.edf', 
                    5: 'data/eeg-during-mental-arithmetic-tasks-1.0.0/Subject05_2.edf'}
-        
+
+
 if __name__ == '__main__': 
 
     #plot functional data and its associated truncated functional principal components
@@ -133,5 +148,13 @@ if __name__ == '__main__':
     plot_fpca_and_functional_eeg(after_arith_test, "after", 19, write_eigspectra=True)
 
     #plot truncated spectrum in log-log scale
-    plot_eigspectra("before")
-    plot_eigspectra("after")
+    plot_eigspectra("before", write_expoenents=True)
+    plot_eigspectra("after", write_expoenents=True)
+    
+    #merge csvs
+    if os.path.exists("eigenspectrum/fit/before_slope.csv") and os.path.exists("eigenspectrum/fit/after_slope.csv"):
+        before = pd.read_csv("eigenspectrum/fit/before_slope.csv")
+        after = pd.read_csv("eigenspectrum/fit/after_slope.csv")
+
+        before_after_slope = pd.merge(before, after, on='subject_idx', how='outer').drop(columns=['Unnamed: 0_x', 'Unnamed: 0_y'])
+        before_after_slope.to_csv(os.path.join("eigenspectrum", "fit","before_after_slope.csv"))  

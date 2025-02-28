@@ -86,7 +86,7 @@ def convert_raweeg_2fd(
     
     if save_plot:
         fd_basis.plot()
-        plt.savefig(f"plots/raw2fd/{eeg_data.time_period.value}/subject{eeg_data.subject_id}.pdf")
+        plt.savefig(f"plots/raw2fd/{eeg_data.time_period.value}/{eeg_data.time_period.value}_subject{eeg_data.subject_id}.png")
         plt.close()
 
     return fd_basis
@@ -104,10 +104,10 @@ def eeg_fpca(
     if save_plot:
         fd_basis.plot()
         if eeg_data.time_period.value == "before":
-            plt.savefig(f"plots/fpca_components/before/subject{eeg_data.subject_id}.pdf")
+            plt.savefig(f"plots/fpca_components/before/before_subject{eeg_data.subject_id}.png")
             plt.close()
         else:
-            plt.savefig(f"plots/fpca_components/after/subject{eeg_data.subject_id}.pdf")
+            plt.savefig(f"plots/fpca_components/after/after_subject{eeg_data.subject_id}.png")
             plt.close()
 
     eigvals = np.square(fpca.singular_values_)
