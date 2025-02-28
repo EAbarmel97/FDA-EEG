@@ -11,8 +11,8 @@ from utils import *
 
 #filter edf files
 eeg_signalfiles_names = list(filter(lambda s : s.endswith(".edf") , 
-                            [os.path.abspath(os.path.join("data/eeg-during-mental-arithmetic-tasks-1.0.0", f)) for 
-                            f in os.listdir("data/eeg-during-mental-arithmetic-tasks-1.0.0")]
+                            [os.path.abspath(os.path.join("/storage5/eabarmel/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0", f)) for 
+                            f in os.listdir("/storage5/eabarmel/FDA-EEG/data/eeg-during-mental-arithmetic-tasks-1.0.0")]
                         ))
 
 #dicts with subject_id - eeg_signal_filepath
@@ -65,7 +65,7 @@ def plot_fpca_and_functional_eeg(
             csv_file_name = f"{time_period.value}_fpca_eigspectrum.csv"
             if not os.path.exists("./eigenspectrum"):
                 os.makedirs("./eigenspectrum")
-            df.to_csv(os.path.join("eigenspectrum", csv_file_name))              
+            df.to_csv(os.path.join("/storage5/eabarmel/FDA-EEG","eigenspectrum", csv_file_name))              
     return 
 
 def plot_eigspectra(data_subdir_name: str, write_expoenents: bool = False) -> None:
@@ -80,7 +80,7 @@ def plot_eigspectra(data_subdir_name: str, write_expoenents: bool = False) -> No
     if write_expoenents:
         subject_slope_df = pd.DataFrame(columns=["subject_idx", "exponent"])
         
-    eigspectra_data = pd.read_csv(f"eigenspectrum/{time_period.value}_fpca_eigspectrum.csv")
+    eigspectra_data = pd.read_csv(f"/storage5/eabarmel/FDA-EEG/eigenspectrum/{time_period.value}_fpca_eigspectrum.csv")
     for i in range(1, eigspectra_data.shape[1]):
 
         eigspectrum = eigspectra_data.iloc[:,i].values
@@ -120,11 +120,11 @@ def plot_eigspectra(data_subdir_name: str, write_expoenents: bool = False) -> No
    
         plt.title(f"FPCA exponent = {slope:.3f}")
         plt.tight_layout()
-        plt.savefig(f"plots/eigenspectrum/{time_period.value}/{time_period.value}_subject{i}.png")
+        plt.savefig(f"/storage5/eabarmel/FDA-EEG/plots/eigenspectrum/{time_period.value}/{time_period.value}_subject{i}.png")
         plt.close()
 
     if write_expoenents:
-        subject_slope_df.to_csv(os.path.join("eigenspectrum", "fit", f"{time_period.value}_slope.csv"))    
+        subject_slope_df.to_csv(os.path.join("/storage5/eabarmel/FDA-EEG","eigenspectrum", "fit", f"{time_period.value}_slope.csv"))    
 
 if __name__ == '__main__': 
 
@@ -137,9 +137,9 @@ if __name__ == '__main__':
     plot_eigspectra("after", write_expoenents=True)
     
     #merge csvs
-    if os.path.exists("eigenspectrum/fit/before_slope.csv") and os.path.exists("eigenspectrum/fit/after_slope.csv"):
-        before = pd.read_csv("eigenspectrum/fit/before_slope.csv")
-        after = pd.read_csv("eigenspectrum/fit/after_slope.csv")
+    if os.path.exists("/storage5/eabarmel/FDA-EEG/eigenspectrum/fit/before_slope.csv") and os.path.exists("/storage5/eabarmel/FDA-EEG/eigenspectrum/fit/after_slope.csv"):
+        before = pd.read_csv("/storage5/eabarmel/FDA-EEG/eigenspectrum/fit/before_slope.csv")
+        after = pd.read_csv("/storage5/eabarmel/FDA-EEG/eigenspectrum/fit/after_slope.csv")
 
         before_after_slope = pd.merge(before, after, on='subject_idx', how='outer').drop(columns=['Unnamed: 0_x', 'Unnamed: 0_y'])
-        before_after_slope.to_csv(os.path.join("eigenspectrum", "fit","before_after_slope.csv"))  
+        before_after_slope.to_csv(os.path.join("/storage5/eabarmel/FDA-EEG","eigenspectrum", "fit","before_after_slope.csv"))
